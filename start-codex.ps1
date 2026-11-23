@@ -1,9 +1,9 @@
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'wait-proxy.ps1')
 $state = Join-Path $env:LOCALAPPDATA 'CopilotCodexProxy\state'
 $env:CODEX_COPILOT_PROXY_KEY = [IO.File]::ReadAllText((Join-Path $state 'local-api-key')).Trim()
 $headers = @{ Authorization = "Bearer $env:CODEX_COPILOT_PROXY_KEY" }
-$health = Invoke-RestMethod 'http://127.0.0.1:17688/health' -Headers $headers -TimeoutSec 5
-if ($health.provider -ne 'github-copilot') { throw 'Unexpected local proxy health response.' }
+$null = Wait-CopilotProxy -Headers $headers
 $package = Get-AppxPackage 'OpenAI.Codex' | Select-Object -First 1
 if (!$package) { throw 'Codex Desktop is not installed for this Windows user.' }
 $manifest = Get-AppxPackageManifest -Package $package.PackageFullName
