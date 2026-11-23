@@ -1,0 +1,10 @@
+node_modules/
+state/
+*.log
+*.jsonl
+.env
+.env.*
+github.json
+local-api-key
+config.toml
+*.bak
